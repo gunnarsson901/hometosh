@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-CONFIG_PATH = "/boot/config.txt"
+CONFIG_PATH = "/boot/firmware/config.txt"
 # For testing safely without messing up boot, uncomment below:
 # CONFIG_PATH = "./config_test.txt" 
 
@@ -20,25 +20,37 @@ def read_config():
     # Extract params using regex or simple parsing
     # Looking for dtparam=...
     # simple parser for specific keys we care about
-    keys = ['hactive', 'hfp', 'hsync', 'hbp', 'vactive', 'vfp', 'vsync', 'vbp', 'clock-frequency']
+    keys = ['hactive', 'hfp', 'hsync', 'hbp', 'vactive', 'vfp', 'vsync', 'vbp', 'clock-frequency', 'temperature', 'color-mode']
     
+    # Known color formats to look for
+    color_formats = ['rgb888', 'rgb666', 'rgb565', 'rgb666-padhi', 'bgr888']
+
     for line in content.splitlines():
         if line.strip().startswith('dtparam='):
             # remove dtparam=
             param = line.strip()[8:]
+            
+            # Check for key=value
             if '=' in param:
                 k, v = param.split('=', 1)
                 if k in keys:
                     try:
+                        # Try to parse int if possible, else string
                         config[k] = int(v)
                     except:
-                        pass
+                        config[k] = v
+            # Check for boolean/single flags (like color format)
+            elif param in color_formats:
+                config['color-format'] = param
     
     # Defaults if missing
     defaults = {
         "hactive": 512, "hfp": 16, "hsync": 32, "hbp": 48,
         "vactive": 342, "vfp": 10, "vsync": 2, "vbp": 30,
-        "clock-frequency": 15667200
+        "clock-frequency": 15667200,
+        "color-format": "rgb565",
+        "temperature": 6500,
+        "color-mode": "default"
     }
     
     for k, v in defaults.items():
@@ -66,7 +78,8 @@ def save_config():
 
     # Remove old DPI settings to avoid duplicates
     # We remove lines starting with dtparam=key=... for our specific keys
-    keys_to_update = ['hactive', 'hfp', 'hsync', 'hbp', 'vactive', 'vfp', 'vsync', 'vbp', 'clock-frequency']
+    keys_to_update = ['hactive', 'hfp', 'hsync', 'hbp', 'vactive', 'vfp', 'vsync', 'vbp', 'clock-frequency', 'temperature', 'color-mode']
+    color_formats = ['rgb888', 'rgb666', 'rgb565', 'rgb666-padhi', 'bgr888']
     
     new_lines = []
     for line in lines:
@@ -78,6 +91,8 @@ def save_config():
                 k, _ = param.split('=', 1)
                 if k in keys_to_update:
                     skip = True
+            elif param in color_formats:
+                skip = True
         
         # Also remove overlays to ensure we put them back in correct order if we want
         if s_line.startswith('dtoverlay=vc4-kms-v3d') or s_line.startswith('dtoverlay=vc4-kms-dpi-generic'):
@@ -95,6 +110,10 @@ def save_config():
         if k in data:
             new_lines.append(f"dtparam={k}={data[k]}\n")
             
+    # Handle color format as a standalone flag
+    if 'color-format' in data and data['color-format'] in color_formats:
+         new_lines.append(f"dtparam={data['color-format']}\n")
+
     # Write back
     try:
         with open(CONFIG_PATH, 'w') as f:

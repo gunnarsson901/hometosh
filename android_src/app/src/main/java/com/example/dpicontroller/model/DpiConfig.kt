@@ -13,5 +13,9 @@ data class DpiConfig(
     @SerializedName("vsync") var vSync: Int = 2,
     @SerializedName("vbp") var vBp: Int = 30,
     
-    @SerializedName("clock-frequency") var clockFreq: Int = 15667200
+    @SerializedName("clock-frequency") var clockFreq: Int = 15667200,
+
+    @SerializedName("color-format") var colorFormat: String = "rgb565",
+    @SerializedName("color-mode") var colorMode: String = "default",
+    @SerializedName("temperature") var temperature: Int = 6500
 )
