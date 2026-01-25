@@ -1,0 +1,14 @@
+[Unit]
+Description=DPI Configuration Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/felix/hometosh
+ExecStart=/usr/bin/python3 /home/felix/hometosh/dpi_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
