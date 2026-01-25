@@ -87,8 +87,7 @@ def save_config():
             new_lines.append(line)
 
     # Append new config
-    new_lines.append("\n# --- DPI Config (Added by Remote App) ---
-")
+    new_lines.append("\n# --- DPI Config (Added by Remote App) ---\n")
     new_lines.append("dtoverlay=vc4-kms-v3d\n")
     new_lines.append("dtoverlay=vc4-kms-dpi-generic\n")
     
