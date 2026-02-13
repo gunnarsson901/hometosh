@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/path/to/hometosh
-ExecStart=/usr/bin/python3 /path/to/hometosh/dpi_server.py
+WorkingDirectory=/home/homethosh/hometosh
+ExecStart=/usr/bin/python3 /home/homethosh/hometosh/dpi_server.py
 Restart=always
 RestartSec=5
 

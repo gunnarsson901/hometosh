@@ -1,0 +1,34 @@
+{
+  "scripts": [
+    {
+      "name": "open_calculator",
+      "command": "gnome-calculator",
+      "phrases": ["open calculator", "launch calculator"]
+    },
+    {
+      "name": "hand_open",
+      "command": "python3 ./scripts/hometosh_hand.py open",
+      "phrases": ["open hand", "hand open"]
+    },
+    {
+      "name": "hand_fist",
+      "command": "python3 ./scripts/hometosh_hand.py fist",
+      "phrases": ["make a fist", "clench hand", "hand fist"]
+    },
+    {
+      "name": "hand_peace",
+      "command": "python3 ./scripts/hometosh_hand.py peace",
+      "phrases": ["make peace sign", "peace sign"]
+    },
+    {
+      "name": "hand_point",
+      "command": "python3 ./scripts/hometosh_hand.py point",
+      "phrases": ["point finger", "point hand"]
+    },
+    {
+      "name": "hand_wave",
+      "command": "python3 ./scripts/hometosh_hand.py wave",
+      "phrases": ["wave hand", "wave goodbye"]
+    }
+  ]
+}
